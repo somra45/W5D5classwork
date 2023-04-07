@@ -17,8 +17,7 @@ def cast_list(title)
   # List all the actors for a particular movie, given the title.
   # Sort the results by starring order (ord). Show the actor id and name.
 
-  
-  
+  Actor.joins(:movies).where('title = (?)', title).order(ord: :asc).select(:id, :name)
 end
 
 def vanity_projects
@@ -26,11 +25,11 @@ def vanity_projects
   # starring actor. Show the movie id, title, and director's name.
 
   # Note: Directors appear in the 'actors' table.
-  
+  Movie.joins(:director, :castings).where('castings.ord = 1 AND castings.actor_id = movies.director_id').select(:id, :title, :name)
 end
 
 def most_supportive
   # Find the two actors with the largest number of non-starring roles.
   # Show each actor's id, name, and number of supporting roles.
-  
+  Actor.joins(:castings).where('castings.ord != 1').group(:id).order(roles: :desc).limit(2).select(:id, :name, 'COUNT(actor_id) AS roles')
 end
